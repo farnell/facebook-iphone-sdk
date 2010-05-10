@@ -36,6 +36,10 @@ static FBSession* sharedSession = nil;
   getSessionProxy = _getSessionProxy, uid = _uid, sessionKey = _sessionKey,
   sessionSecret = _sessionSecret, expirationDate = _expirationDate;
 
+// matt
+@synthesize fbQueue;
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class public
 
@@ -52,6 +56,12 @@ static FBSession* sharedSession = nil;
   FBSession* session = [[[FBSession alloc] initWithKey:key secret:secret
     getSessionProxy:nil] autorelease];
   [session.delegates addObject:delegate];
+	
+	//matt
+	NSOperationQueue *opQueue = [[NSOperationQueue alloc] init];	
+	[session setFbQueue:opQueue]; 
+	[opQueue release];
+	
   return session;
 }
 
@@ -69,7 +79,9 @@ static FBSession* sharedSession = nil;
 - (void)save {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   if (_uid) {
-    [defaults setObject:[NSNumber numberWithLongLong:_uid] forKey:@"FBUserId"];
+	  // matt
+    //[defaults setObject:[NSNumber numberWithLongLong:_uid] forKey:@"FBUserId"];
+	  [defaults setObject:[NSNumber numberWithUnsignedLongLong:_uid] forKey:@"FBUserId"];
   } else {
     [defaults removeObjectForKey:@"FBUserId"];
   }

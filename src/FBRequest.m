@@ -18,6 +18,7 @@
 #import "FBConnect/FBSession.h"
 #import "FBXMLHandler.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "QueuedRequest.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // global
@@ -201,9 +202,13 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
   }
 }
 
+
 - (void)failWithError:(NSError*)error {
   if ([_delegate respondsToSelector:@selector(request:didFailWithError:)]) {
-    [_delegate request:self didFailWithError:error];
+	  // orig   
+	  //[_delegate request:self didFailWithError:error];
+	  // matt
+	  [self performSelectorOnMainThread:@selector(callFailWithError:) withObject:error waitUntilDone:NO];		
   }
 }
 
@@ -214,9 +219,13 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
   if (error) {
     [self failWithError:error];
   } else if ([_delegate respondsToSelector:@selector(request:didLoad:)]) {
-    [_delegate request:self didLoad:result];
+	  // orig
+	  //[_delegate request:self didLoad:result];
+	  // matt
+	  [self performSelectorOnMainThread:@selector(callDidLoad:) withObject:result waitUntilDone:NO];    
   }
 }
+
 
 - (void)connect {
   FBLOG(@"Connecting to %@ %@", _url, _params);
@@ -242,7 +251,20 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
   }
   
   _timestamp = [[NSDate date] retain];
-  _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	
+	// orig  
+	// NSLog(@"FBConnect request before:%@", _url);		
+	//  _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	// NSLog(@"FBConnect request after:%@", _url);			
+	
+	// matt
+	//NSLog(@"QueuedRequest:%@", _url);
+	//NSLog(@"FBConnect QueuedRequest:%@", _url);
+	//NSLog(@"FBConnect QueuedRequest:%@ %@", _url, _params);
+	QueuedRequest *qr = [[QueuedRequest alloc] initWithRequest:request :self];
+	[[_session fbQueue] addOperation:qr];
+	[qr release];
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,5 +396,16 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
     }
   }
 }
+
+// matt
+- (void)callDidLoad:(id)result {
+    [_delegate request:self didLoad:result];	
+}
+
+// matt
+- (void)callFailWithError:(NSError*)error {
+    [_delegate request:self didFailWithError:error];
+}
+
 
 @end

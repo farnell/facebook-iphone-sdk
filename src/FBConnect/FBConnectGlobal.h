@@ -38,6 +38,10 @@ typedef unsigned long long FBID;
 
 #define FBAPI_ERROR_DOMAIN @"api.facebook.com"
 
+// added by matt
+#define IMAGE_COMPRESSION_QUALITY_FACEBOOK 0.4
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Error codes
 
@@ -54,6 +58,11 @@ typedef unsigned long long FBID;
 #define FBAPI_EC_PERMISSION_DENIED 10
 #define FBAPI_EC_DEPRECATED 11
 #define FBAPI_EC_VERSION 12
+
+// added by matt, it looks like the old generic error and was 13 but it now seems like its 612
+#define FBAPI_EC_PERMISSION_DENIED_READ_STREAM_MATTBUGFIX 13
+// stream requires the read_stream extended permission
+#define FBAPI_EC_PERMISSION_DENIED_READ_STREAM_EXTENDED_PERMISSION_NEWMATTBUGFIX 612
 
 #define FBAPI_EC_PARAM 100
 #define FBAPI_EC_PARAM_FBAPI_KEY 101

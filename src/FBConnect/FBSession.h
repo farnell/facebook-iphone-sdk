@@ -44,7 +44,13 @@
   NSDate* _lastRequestTime;
   int _requestBurstCount;
   NSTimer* _requestTimer;
+	
+  // matt
+  NSOperationQueue *fbQueue;
+	
 }
+
+@property (nonatomic, retain) NSOperationQueue *fbQueue;	
 
 /**
  * Delegates which implement FBSessionDelegate.
